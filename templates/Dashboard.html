@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/heart_failure/static/css/Dashboard.css">
+</head>
+<body class="min-h-screen">
+    <header class="dashboard-header py-4 px-6 mb-8">
+        <div class="flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-800">Patient Dashboard</h1>
+            <div class="flex items-center space-x-4">
+                <span id="currentDate" class="text-gray-600"></span>
+                <button onclick="window.location.href='patient.html'" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors">
+                    New Patient
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 pb-12">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Patient Profile Section -->
+            <div class="lg:col-span-1">
+                <div class="patient-card">
+                    <div class="card-header p-4 flex justify-between items-center">
+                        <h2 class="patient-title text-xl font-semibold">Patient Profile</h2>
+                        <span class="patient-id bg-white text-blue-600 px-3 py-1 rounded-full text-sm font-medium">ID: <span id="patientID">P-000001</span></span>
+                    </div>
+                    
+                    <div class="p-4 flex flex-col items-center">
+                        <div class="mb-4">
+                            <img src="/heart_failure/static/image/dashboard_image.jpg" alt="Patient profile picture" class="profile-img rounded-full" id="patientImg">
+                        </div>
+                        
+                        <div class="w-full">
+                            <div class="info-item">
+                                <div class="info-label">Full Name</div>
+                                <div class="info-value text-xl" id="patientName">likith</div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <div class="info-label">Gender</div>
+                                <div class="info-value" id="patientGender">Male</div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <div class="info-label">Date of Birth</div>
+                                <div class="info-value" id="patientDOB">01/01/2005</div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <div class="info-label">Blood Type</div>
+                                <div class="info-value" id="patientBloodType">O+</div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <div class="info-label">Last Visit</div>
+                                <div class="info-value" id="lastVisit">Never</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Patient Stats Section -->
+            <div class="lg:col-span-2 space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="stat-card">
+                        <div class="stat-value" id="appointmentsCount">0</div>
+                        <div class="stat-label">Upcoming Appointments</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-value text-green-600" id="prescriptionsCount">0</div>
+                        <div class="stat-label">Active Prescriptions</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-value text-red-600" id="testsCount">0</div>
+                        <div class="stat-label">Pending Tests</div>
+                    </div>
+                </div>
+
+                <!-- Medical History Section -->
+                <div class="patient-card">
+                    <div class="card-header p-4">
+                        <h2 class="patient-title text-xl font-semibold">Medical History</h2>
+                    </div>
+                    
+                    <div class="p-4">
+                        <p class="text-gray-600">No medical history recorded yet.</p>
+                        <div id="medicalHistory" class="mt-4 space-y-4">
+                            <!-- Would be populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity Section -->
+                <div class="patient-card">
+                    <div class="card-header p-4">
+                        <h2 class="patient-title text-xl font-semibold">Recent Activity</h2>
+                    </div>
+                    
+                    <div class="p-4">
+                        <div id="recentActivity">
+                            <p class="text-gray-600">No recent activity.</p>
+                            <!-- Would be populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Set current date
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+
+        // Load patient data from localStorage
+        window.onload = function() {
+            const patientName = localStorage.getItem('patientName');
+            const patientGender = localStorage.getItem('patientGender');
+            const patientDOB = localStorage.getItem('patientDOB');
+            const patientBloodType = localStorage.getItem('patientBloodType');
+
+            if (patientName) document.getElementById('patientName').textContent = patientName;
+            if (patientGender) document.getElementById('patientGender').textContent = patientGender;
+            if (patientDOB) {
+                const formattedDate = new Date(patientDOB).toLocaleDateString('en-US');
+                document.getElementById('patientDOB').textContent = formattedDate;
+            }
+            if (patientBloodType) document.getElementById('patientBloodType').textContent = patientBloodType;
+
+            // Generate a random patient ID if not exists
+            patientID = "0001"
+
+            // Update last visit time
+            localStorage.setItem('lastVisit', new Date().toLocaleString());
+            document.getElementById('lastVisit').textContent = new Date().toLocaleString();
+            
+            // Generate random stats for demo
+            document.getElementById('appointmentsCount').textContent = Math.floor(Math.random() * 5);
+            document.getElementById('prescriptionsCount').textContent = Math.floor(Math.random() * 3);
+            document.getElementById('testsCount').textContent = Math.floor(Math.random() * 2);
+        };
+    </script>
+</body>
+</html>

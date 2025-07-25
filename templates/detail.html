@@ -1,0 +1,812 @@
+<!-- PRODDUTURU LIKITH KUMAR -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare Doctor - Disease Prediction Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --secondary-color: #6c757d;
+            --success-color: #198754;
+            --danger-color: #dc3545;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        header {
+            background-color: rgb(178, 179, 182);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo img {
+            height: 50px;
+            margin-right: 10px;
+        }
+        
+        .logo h1 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 2rem;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #47124c;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .hero {
+            background: linear-gradient(rgba(21, 83, 206, 0.8), rgba(25, 100, 213, 0.9)), url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 5rem 2rem;
+            text-align: center;
+        }
+        
+        .hero h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .section-title h2 {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .prediction-tools {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+        
+        .tool-card {
+            background-color: rgb(220, 18, 18);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(211, 21, 21, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(196, 25, 25, 0.2);
+        }
+        
+        .tool-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+        
+        .tool-card h3 {
+            margin-bottom: 1rem;
+            color: var(--dark-color);
+        }
+        
+        .patient-search {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto 4rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            text-align: left;
+        }
+        
+        .footer-column h3 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-column ul li a {
+            color: #adb5bd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-column ul li a:hover {
+            color: white;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .social-links a {
+            color: white;
+            background-color: var(--secondary-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+        }
+        .tool-form {
+        margin-top: 1.5rem;
+    }
+    
+    .tool-form button {
+        width: 100%;
+    }
+    
+    .tool-card {
+        position: relative;
+        overflow: visible;
+    }
+    
+    .tool-icon {
+        font-size: 3rem;
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Maintain existing styles from the original dashboard */
+    .prediction-tools {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 4rem;
+    }
+    
+    .tool-card {
+        background-color: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+        text-align: center;
+        padding: 2rem;
+    }
+    
+    .tool-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 0.5rem 1.5rem;
+        background-color: var(--secondary-color);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: 500;
+        transition: background-color 0.3s;
+    }
+    
+    .btn:hover {
+        background-color: #2e8c62;
+    }
+        
+        .social-links a:hover {
+            background-color: var(--primary-color);
+        }
+        
+        .copyright {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #495057;
+        }
+        
+        /* Chatbot Styles */
+        .chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            z-index: 1000;
+        }
+        
+        .chatbot-header {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 1rem;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .chatbot-body {
+            background-color: white;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            overflow: hidden;
+            display: none;
+        }
+        
+        .chatbot-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+        
+        .message {
+            margin-bottom: 1rem;
+            max-width: 80%;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .bot-message {
+            background-color: #f1f1f1;
+            align-self: flex-start;
+        }
+        
+        .user-message {
+            background-color: var(--primary-color);
+            color: white;
+            align-self: flex-end;
+        }
+        
+        .chatbot-input {
+            display: flex;
+            padding: 0.5rem;
+            border-top: 1px solid #ddd;
+        }
+        
+        .chatbot-input input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-right: 0.5rem;
+        }
+        
+        .chatbot-input button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 0 1rem;
+            cursor: pointer;
+        }
+        
+        .chatbot-toggle {
+            background-color: var(--primary-color);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                margin-top: 1rem;
+            }
+            
+            .nav-links li {
+                margin-left: 1rem;
+                margin-right: 1rem;
+            }
+            
+            .hero h2 {
+                font-size: 2rem;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .chatbot-container {
+                color: violet;
+                width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <img src="/heart_failure/static/image/hospital_logo.png" alt="Hospital Logo">
+                <h1>MediCare Doctor</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="http://127.0.0.1:5500/heart_failure/templates/Dashboard.html">Dashboard</a></li>
+                <li><a href="http://127.0.0.1:5500/heart_failure/templates/patients.html?">Patients</a></li>
+                <li><a href="http://127.0.0.1:5500/heart_failure/templates/reports.html">Reports</a></li>
+                <li><a href="http://127.0.0.1:5500/heart_failure/templates/settings.html">Settings</a></li>
+            </ul>
+            <a href="http://127.0.0.1:5500/templates/login.html" class="btn" id="logoutBtn">Logout</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1>Advanced Health Monitoring System</h1>
+        <h4>Access our AI-powered prediction models to assist in clinical decision making and patient care.</h4>
+    </section>
+
+    <div class="container">
+        <section>
+            <div class="section-title">
+                <h1>Patient Search</h1>
+                <h4>Find patient records to begin analysis</h4>
+            </div>
+            <div class="patient-search">
+                <form id="patientSearchForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="patientId">Patient ID</label>
+                            <input type="text" id="patientId" class="form-control" placeholder="Enter patient ID">
+                        </div>
+                        <div class="form-group">
+                            <label for="patientName">Patient Name</label>
+                            <input type="text" id="patientName" class="form-control" placeholder="Enter patient name">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">Search</button>
+                </form>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-title">
+                <h1>Prediction Tools</h1>
+                <h3>Select a prediction model to analyze patient data</h3>
+            </div>
+            <div class="prediction-tools">
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <div class="prediction-tools">
+    <section>
+    <div class="container">
+        <div class="prediction-tools">
+            <!-- Heart Failure Risk Tool -->
+            <div class="tool-card">
+                <div class="tool-icon">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+                <h3>Heart Failure Risk</h3>
+                <p>Predict the likelihood of heart failure based on patient vitals, medical history, and test results.</p>
+                <form id="heartDiseaseForm" method="POST" action="/heartdisease" class="tool-form">
+                    <!-- Add input fields here if needed -->
+                    <button type="submit" class="btn">Submit Data Report</button>
+                </form>
+            </div>
+
+            <!-- Coronary Artery Stenosis Tool -->
+            <div class="tool-card">
+                <div class="tool-icon">
+                    <i class="fas fa-artery"></i>
+                </div>
+                <h3>Coronary Artery Stenosis</h3>
+                <p>Assess the probability and severity of coronary artery stenosis using clinical parameters.</p>
+                <form id="analysis-form" method="POST" action="/classificationpred" class="tool-form">
+                    <!-- Add input fields here if needed -->
+                    <button type="submit" class="btn">Submit Image Report</button>
+                </form>
+            </div>
+
+            <!-- Oral Cancer Detection Tool -->
+            <div class="tool-card">
+                <div class="tool-icon">
+                    <i class="fas fa-teeth"></i>
+                </div>
+                <h3>Oral Cancer Detection</h3>
+                <p>Evaluate the risk of oral cancer based on symptoms, imaging, and biopsy results.</p>
+                <form id="cancerImageForm" method="POST" action="/cancerprediction" class="tool-form">
+                    <!-- Add input fields here if needed -->
+                    <button type="submit" class="btn">Submit Cancer Images</button>
+                </form>
+            </div>
+        </div> <!-- Closing prediction-tools div -->
+    </div> <!-- Closing container div -->
+</section>
+</div>
+
+
+        <section>
+            <div class="section-title">
+                <h2>Recent Predictions</h2>
+                <p>Your recently analyzed patient cases</p>
+            </div>
+            <div class="prediction-tools">
+                <div class="tool-card">
+                    <h4>Patient: John Doe</h4>
+                    <p><strong>Prediction:</strong> Moderate risk of heart failure (42%)</p>
+                    <p><strong>Date:</strong> 2023-05-15</p>
+                    <button class="btn btn-outline">View Details</button>
+                </div>
+                <div class="tool-card">
+                    <h4>Patient: Sarah Smith</h4>
+                    <p><strong>Prediction:</strong> Low risk of coronary stenosis (18%)</p>
+                    <p><strong>Date:</strong> 2023-05-14</p>
+                    <button class="btn btn-outline">View Details</button>
+                </div>
+                <div class="tool-card">
+                    <h4>Patient: Michael Johnson</h4>
+                    <p><strong>Prediction:</strong> High risk of oral cancer (76%)</p>
+                    <p><strong>Date:</strong> 2023-05-12</p>
+                    <button class="btn btn-outline">View Details</button>
+                </div>
+            </div>
+        </section>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>MediCare Doctor</h3>
+                <p>Advanced clinical decision support tools powered by AI to enhance patient care and outcomes.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.linkedin.com/in/likithkumar456/"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="http://127.0.0.1:5500/heart_failure/templates/Dashboard.html">Dashboard</a></li>
+                    <li><a href="http://127.0.0.1:5500/heart_failure/templates/patients.html">Patients</a></li>
+                    <li><a href="http://127.0.0.1:5500/heart_failure/templates/reports.html">Reports</a></li>
+                    <li><a href="http://127.0.0.1:5500/heart_failure/templates/settings.html">Settings</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="#">Documentation</a></li>
+                    <li><a href="#">Training</a></li>
+                    <li><a href="#">API Access</a></li>
+                    <li><a href="#">Feedback</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Contact</h3>
+                <ul>
+                    <li><i class="fas fa-envelope"></i> kumarlikith178@gmail.com</li>
+                    <li><i class="fas fa-phone"></i> (+91) 8247516414</li>
+                    <li><i class="fas fa-clock"></i> Support: Mon-Fri, 9AM-5PM</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2025 MediCare Doctor. For clinical use only.</p>
+        </div>
+    </footer>
+
+       <!-- Chatbot Container -->
+    <div class="chatbot-container">
+        <div class="chatbot-toggle" id="chatbotToggle">
+            <i class="fas fa-robot"></i>
+        </div>
+        <div class="chatbot-header" id="chatbotHeader">
+            <h3>Clinical Assistant</h3>
+            <i class="fas fa-times" id="closeChatbot"></i>
+        </div>
+        <div class="chatbot-body" id="chatbotBody">
+            <div class="chatbot-messages" id="chatbotMessages">
+                <div class="message bot-message">
+                    Hello Doctor! I'm your clinical assistant. How can I help you today?
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="userMessage" placeholder="Type your question...">
+                <button id="sendMessage"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Chatbot functionality
+        const chatbotToggle = document.getElementById('chatbotToggle');
+        const chatbotHeader = document.getElementById('chatbotHeader');
+        const chatbotBody = document.getElementById('chatbotBody');
+        const closeChatbot = document.getElementById('closeChatbot');
+        const chatbotMessages = document.getElementById('chatbotMessages');
+        const userMessageInput = document.getElementById('userMessage');
+        const sendMessageBtn = document.getElementById('sendMessage');
+
+        // Toggle chatbot visibility
+        chatbotToggle.addEventListener('click', () => {
+            chatbotBody.style.display = 'flex';
+            chatbotToggle.style.display = 'none';
+        });
+
+        closeChatbot.addEventListener('click', () => {
+            chatbotBody.style.display = 'none';
+            chatbotToggle.style.display = 'flex';
+        });
+
+        // Send message function
+        function sendMessage() {
+            const message = userMessageInput.value.trim();
+            if (message) {
+                // Add user message to chat
+                addMessage(message, 'user');
+                userMessageInput.value = '';
+                
+                // Simulate bot response with medical knowledge
+                setTimeout(() => {
+                    const botResponse = generateClinicalResponse(message);
+                    addMessage(botResponse, 'bot');
+                }, 1000);
+            }
+        }
+
+        // Add message to chat
+        function addMessage(message, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.classList.add(sender === 'bot' ? 'bot-message' : 'user-message');
+            messageDiv.textContent = message;
+            chatbotMessages.appendChild(messageDiv);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        }
+
+async function fetchBotResponse(message) {
+    try {
+        const response = await fetch('/api/chatbot', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message })
+        });
+
+        const data = await response.json();
+        return data.response || "Sorry, no response received.";
+    }   catch (error) {
+        console.error("Error fetching bot response:", error);
+        return "Something went wrong while processing your request.";
+    }
+}
+
+
+async function sendMessage() {
+    const message = userMessageInput.value.trim();
+    if (message) {
+        // Add user message to chat
+        addMessage(message, 'user');
+        userMessageInput.value = '';
+        
+        // Fetch bot response
+        const botResponse = await fetchBotResponse(message);
+        addMessage(botResponse, 'bot');
+    }
+}
+
+
+          
+        // Event listeners for sending messages
+        sendMessageBtn.addEventListener('click', sendMessage);
+        userMessageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        // You can add form submission handling here if needed
+    document.getElementById('heartDiseaseForm').addEventListener('submit', function(e) {
+        // Additional handling before submission if needed
+        console.log('Submitting heart disease form');
+    });
+    
+    document.getElementById('analysis-form').addEventListener('submit', function(e) {
+        console.log('Submitting coronary artery stenosis form');
+    });
+    
+    document.getElementById('cancerImageForm').addEventListener('submit', function(e) {
+        console.log('Submitting cancer image form');
+    });
+
+        // Patient search functionality
+        const patientSearchForm = document.getElementById('patientSearchForm');
+        
+        patientSearchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const patientId = document.getElementById('patientId').value;
+            const patientName = document.getElementById('patientName').value;
+            
+            // In a real application, this would search a database
+            console.log(`Searching for patient: ID=${patientId}, Name=${patientName}`);
+            
+            // Simulate search results
+            alert(patientId || patientName 
+                ? `Search results for: ${patientId || patientName}` 
+                : 'Please enter search criteria');
+        });
+
+        // Logout functionality
+        /*document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            if (confirm('Are you sure you want to logout?')) {
+                // In a real app, this would clear session and redirect
+                alert('You have been logged out. Redirecting to login page.');
+                // window.location.href = '/login';
+            }
+        });   */
+
+        
+        // Simulate loading patient data (for demo purposes)
+        function simulatePatientSearch() {
+            const demoPatients = [
+                { id: "MRN1001", name: "John Doe", age: 62, gender: "Male", lastVisit: "2023-05-10" },
+                { id: "MRN1002", name: "Sarah Smith", age: 45, gender: "Female", lastVisit: "2023-05-09" },
+                { id: "MRN1003", name: "Michael Johnson", age: 58, gender: "Male", lastVisit: "2023-05-08" }
+            ];
+            
+            // This would be replaced with actual API calls in production
+            console.log("Available demo patients:", demoPatients);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            simulatePatientSearch();
+            
+            // Set up any initial UI states
+            chatbotBody.style.display = 'none';
+        });
+    </script>
+</body>
+</html>

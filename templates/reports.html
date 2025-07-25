@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Reports</title>
+    <link rel="stylesheet" href="/heart_failure/static/css/patients.css">
+</head>
+<body onload="loadData()">
+    <div class="dashboard-container" id="dashboard">
+        <div class="patient-card">
+            <div class="card-header">
+                <h2 class="patient-title">Medical Reports</h2>
+                <span class="patient-id">ID: <span id="patientID">P-000001</span></span>
+            </div>
+            
+            <div class="reports-grid">
+                <div class="report-card">
+                    <h3>Heart Failure Rate</h3>
+                    <div class="report-date">Date: <span id="ecgDate">2023-05-15</span></div>
+                    <div class="report-status normal">Status: Normal</div>
+                    <button class="view-report">View Full Report</button>
+                </div>
+
+                <div class="report-card">
+                    <h3>Coronary Stenosis</h3>
+                    <div class="report-date">Date: <span id="bloodTestDate">2023-05-10</span></div>
+                    <div class="report-status warning">Status: Stenosis Detected</div>
+                    <button class="view-report">View Full Report</button>
+                </div>
+
+                <div class="report-card">
+                    <h3>Mouth cancer</h3>
+                    <div class="report-date">Date: <span id="ctScanDate">2023-04-28</span></div>
+                    <div class="report-status normal">Status: No Abnormalities</div>
+                    <button class="view-report">View Full Report</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function loadData() {
+            // Here you could load actual reports data from an API or localStorage
+            // For demo, we're using static data
+        }
+    </script>
+</body>
+</html>
