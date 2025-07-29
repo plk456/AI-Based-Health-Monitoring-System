@@ -640,112 +640,184 @@
 
        <!-- Chatbot Container -->
     <div class="chatbot-container">
-        <div class="chatbot-toggle" id="chatbotToggle">
-            <i class="fas fa-robot"></i>
+    <div class="chatbot-toggle" id="chatbotToggle">
+        <i class="fas fa-robot"></i>
+    </div>
+    <div class="chatbot-header" id="chatbotHeader">
+        <h3>Clinical AI Assistant</h3>
+        <i class="fas fa-times" id="closeChatbot"></i>
+    </div>
+    <div class="chatbot-body" id="chatbotBody">
+        <div class="chatbot-messages" id="chatbotMessages">
+            <div class="message bot-message">
+                Hello Doctor! I'm your clinical AI assistant. I can analyze both text descriptions and medical images. How can I assist you today?
+            </div>
         </div>
-        <div class="chatbot-header" id="chatbotHeader">
-            <h3>Clinical Assistant</h3>
-            <i class="fas fa-times" id="closeChatbot"></i>
-        </div>
-        <div class="chatbot-body" id="chatbotBody">
-            <div class="chatbot-messages" id="chatbotMessages">
-                <div class="message bot-message">
-                    Hello Doctor! I'm your clinical assistant. How can I help you today?
+        <div class="chatbot-input">
+            <div class="input-options">
+                <label for="imageUpload" class="upload-btn">
+                    <i class="fas fa-image"></i> Upload Image
+                    <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+                </label>
+                <div id="imagePreview" style="display: none;">
+                    <img id="previewImage" src="#" alt="Preview" style="max-width: 100px; max-height: 100px;">
+                    <button id="removeImage" class="btn-small"><i class="fas fa-times"></i></button>
                 </div>
             </div>
-            <div class="chatbot-input">
-                <input type="text" id="userMessage" placeholder="Type your question...">
+            <div class="text-input-container">
+                <input type="text" id="userMessage" placeholder="Type your question or describe the image...">
                 <button id="sendMessage"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
     </div>
+</div>
+
 
     <script>
-        // Chatbot functionality
-        const chatbotToggle = document.getElementById('chatbotToggle');
-        const chatbotHeader = document.getElementById('chatbotHeader');
-        const chatbotBody = document.getElementById('chatbotBody');
-        const closeChatbot = document.getElementById('closeChatbot');
-        const chatbotMessages = document.getElementById('chatbotMessages');
-        const userMessageInput = document.getElementById('userMessage');
-        const sendMessageBtn = document.getElementById('sendMessage');
+        // Chatbot functionality with image support
+    const chatbotToggle = document.getElementById('chatbotToggle');
+    const chatbotHeader = document.getElementById('chatbotHeader');
+    const chatbotBody = document.getElementById('chatbotBody');
+    const closeChatbot = document.getElementById('closeChatbot');
+    const chatbotMessages = document.getElementById('chatbotMessages');
+    const userMessageInput = document.getElementById('userMessage');
+    const sendMessageBtn = document.getElementById('sendMessage');
+    const imageUpload = document.getElementById('imageUpload');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewImage = document.getElementById('previewImage');
+    const removeImage = document.getElementById('removeImage');
 
-        // Toggle chatbot visibility
-        chatbotToggle.addEventListener('click', () => {
-            chatbotBody.style.display = 'flex';
-            chatbotToggle.style.display = 'none';
-        });
+    let currentImage = null;
 
-        closeChatbot.addEventListener('click', () => {
-            chatbotBody.style.display = 'none';
-            chatbotToggle.style.display = 'flex';
-        });
+    // Toggle chatbot visibility
+    chatbotToggle.addEventListener('click', () => {
+        chatbotBody.style.display = 'flex';
+        chatbotToggle.style.display = 'none';
+    });
 
-        // Send message function
-        function sendMessage() {
-            const message = userMessageInput.value.trim();
-            if (message) {
-                // Add user message to chat
-                addMessage(message, 'user');
-                userMessageInput.value = '';
-                
-                // Simulate bot response with medical knowledge
-                setTimeout(() => {
-                    const botResponse = generateClinicalResponse(message);
-                    addMessage(botResponse, 'bot');
-                }, 1000);
+    closeChatbot.addEventListener('click', () => {
+        chatbotBody.style.display = 'none';
+        chatbotToggle.style.display = 'flex';
+        clearImage();
+    });
+
+    // Handle image upload
+    imageUpload.addEventListener('change', function(e) {
+        if (e.target.files.length > 0) {
+            const file = e.target.files[0];
+            if (file.type.match('image.*')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    previewImage.src = event.target.result;
+                    imagePreview.style.display = 'flex';
+                    currentImage = file;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert('Please upload an image file');
+                clearImage();
             }
         }
+    });
 
-        // Add message to chat
-        function addMessage(message, sender) {
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add('message');
-            messageDiv.classList.add(sender === 'bot' ? 'bot-message' : 'user-message');
-            messageDiv.textContent = message;
-            chatbotMessages.appendChild(messageDiv);
-            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    // Remove image
+    removeImage.addEventListener('click', clearImage);
+
+    function clearImage() {
+        imageUpload.value = '';
+        previewImage.src = '#';
+        imagePreview.style.display = 'none';
+        currentImage = null;
+    }
+
+    // Chatbot functionality with image support
+    const sendMessage = async () => {
+        const message = userMessageInput.value.trim();
+        
+        if (!message && !currentImage) {
+            return; // Don't send empty messages without content
         }
 
-async function fetchBotResponse(message) {
-    try {
-        const response = await fetch('/api/chatbot', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message })
-        });
-
-        const data = await response.json();
-        return data.response || "Sorry, no response received.";
-    }   catch (error) {
-        console.error("Error fetching bot response:", error);
-        return "Something went wrong while processing your request.";
-    }
-}
-
-
-async function sendMessage() {
-    const message = userMessageInput.value.trim();
-    if (message) {
         // Add user message to chat
-        addMessage(message, 'user');
+        addMessage(message || "[Image analysis request]", 'user');
+        
+        if (currentImage) {
+            // Add image preview to chat
+            const imgMessage = document.createElement('div');
+            imgMessage.classList.add('message', 'user-message');
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(currentImage);
+            img.style.maxWidth = '100%';
+            img.style.maxHeight = '200px';
+            img.style.borderRadius = '5px';
+            imgMessage.appendChild(img);
+            chatbotMessages.appendChild(imgMessage);
+        }
+        
         userMessageInput.value = '';
         
-        // Fetch bot response
-        const botResponse = await fetchBotResponse(message);
-        addMessage(botResponse, 'bot');
-    }
-}
+        try {
+            // Show typing indicator
+            const typingIndicator = document.createElement('div');
+            typingIndicator.classList.add('message', 'bot-message');
+            typingIndicator.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Analyzing...';
+            chatbotMessages.appendChild(typingIndicator);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
 
+            // Prepare form data
+            const formData = new FormData();
+            if (message) formData.append('message', message);
+            if (currentImage) formData.append('image', currentImage);
 
-          
-        // Event listeners for sending messages
-        sendMessageBtn.addEventListener('click', sendMessage);
-        userMessageInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendMessage();
+            // Send to backend
+            const response = await fetch('/api/chatbot', {
+                method: 'POST',
+                body: formData
+            });
+
+            // Remove typing indicator
+            chatbotMessages.removeChild(typingIndicator);
+
+            if (response.ok) {
+                const data = await response.json();
+                addMessage(data.response, 'bot');
+            } else {
+                throw new Error('Failed to get response');
             }
-        });
+        } catch (error) {
+            console.error("Error:", error);
+            addMessage("Sorry, I encountered an error processing your request. Please try again.", 'bot');
+        } finally {
+            clearImage();
+        }
+    }
+
+    
+    // Add message to chat
+    function addMessage(content, sender) {
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message');
+        messageDiv.classList.add(sender === 'bot' ? 'bot-message' : 'user-message');
+        
+        if (typeof content === 'string') {
+            messageDiv.textContent = content;
+        } else {
+            messageDiv.appendChild(content);
+        }
+        
+        chatbotMessages.appendChild(messageDiv);
+        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    }
+
+    // Event listeners for sending messages
+    sendMessageBtn.addEventListener('click', sendMessage);
+    userMessageInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+
+
         // You can add form submission handling here if needed
     document.getElementById('heartDiseaseForm').addEventListener('submit', function(e) {
         // Additional handling before submission if needed
@@ -776,16 +848,6 @@ async function sendMessage() {
                 ? `Search results for: ${patientId || patientName}` 
                 : 'Please enter search criteria');
         });
-
-        // Logout functionality
-        /*document.getElementById('logoutBtn').addEventListener('click', (e) => {
-            e.preventDefault();
-            if (confirm('Are you sure you want to logout?')) {
-                // In a real app, this would clear session and redirect
-                alert('You have been logged out. Redirecting to login page.');
-                // window.location.href = '/login';
-            }
-        });   */
 
         
         // Simulate loading patient data (for demo purposes)

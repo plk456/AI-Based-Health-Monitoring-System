@@ -9,22 +9,45 @@ import numpy as np
 import pydicom
 from werkzeug.utils import secure_filename
 import cv2
+from PIL import Image
+import io
 import base64
 from PIL import Image
 from flask_cors import CORS
 from langchain_ollama import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
+from sklearn.exceptions import InconsistentVersionWarning
+import warnings
+warnings.filterwarnings("ignore", category=InconsistentVersionWarning)
 
 app = Flask(__name__)
 
 model = joblib.load('saved_models/lgbm_model.joblib')
 
-llm = OllamaLLM(model="llava:latest")  
+llm = OllamaLLM(model="gemma3")  
 prompt = ChatPromptTemplate.from_template("Answer the question: {question}")
 output_parser = StrOutputParser()
 chat_chain = prompt | llm | output_parser
+'''
+llava_model= OllamaLLM(model="llava")
+prompt_template = """Answer the question about the image if provided. 
+Otherwise, answer the text question normally.
 
+Question: {question}
+{% if image %}Image: {image}{% endif %}
+Answer:"""
+prompt = ChatPromptTemplate.from_template(prompt_template)
+chat_chain = prompt | llava_model | StrOutputParser()
+CORS(app)
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+'''
 
 @app.route('/')
 def login():
@@ -270,7 +293,7 @@ def cancer_prediction_page():
 model3 = YOLO('saved_models/updated_my_model.pt')
 # Configuration
 UPLOAD_FOLDER = 'temp_uploads'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'dcm'}  # Added dcm for DICOM images
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'dcm'}  
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
 
 # Ensure upload directory exists
@@ -380,20 +403,45 @@ def analyze_oncology():
 @app.route('/api/chatbot', methods=['POST'])
 def chatbot():
     try:
-        data = request.get_json()
-        user_message = data.get("message", "").strip()
+        # Check if the request contains JSON or form data
+        if request.content_type == 'application/json':
+            data = request.get_json()
+            user_message = data.get("message", "").strip()
+            user_image = None
+        else:
+            user_message = request.form.get("message", "").strip()
+            user_image = request.files.get("image")
 
-        if not user_message:
-            return jsonify({"response": "No message received."}), 400
+        if not user_message and not user_image:
+            return jsonify({"response": "No message or image received."}), 400
 
-        result = chat_chain.invoke({"question": user_message})
-        return jsonify({"response": result})
+        # Process the text message
+        if user_message:
+            result = chat_chain.invoke({"question": user_message})
+            response_message = result
+        else:
+            response_message = "Image received, processing..."
+
+        # Here you can add image processing logic if needed
+        if user_image:
+            # Process the image (e.g., save it, analyze it, etc.)
+            pass  # Add your image processing logic here
+
+        return jsonify({"response": response_message})
 
     except Exception as e:
         print("Error in chatbot:", e)
         return jsonify({"response": "Internal error occurred."}), 500
 
+
+
+
 if __name__ == '__main__':
     print("plk--->STARTING THE SERVER<---plk")
     app.run(host='0.0.0.0', port=5000,debug=True)
     
+
+
+
+
+
